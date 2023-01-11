@@ -1,77 +1,158 @@
 """
 write a python program that generates a random list of 50000 fake, but reasonable-looking academic papers.
- - There are 50 possible journals.
- - Use faker to  create names for 10000 possible authors.
  - Each paper shall have a year, journal, pages, title, authors and optionally may have references to other papers in this list.
+ - There are 50 possible journals with realistic-looking names.
+ - Use faker to  create names for 10000 possible authors.
+ - A paper may have up to 4 authors.
+ - Do not use faker for titles.
+ - Provide a minimum of 30 title sentence structures.
  - References are to be in academic format.
  - Any references must be to papers in this list.
  - A paper must not reference itself.
+ - Analyze for index out of range errors.
+ - print the first 10 records in YAML format
 """
 
-import faker
-from random import shuffle, randint
 
-faker_gen = faker.Faker()
+import random
+import yaml
+from faker import Faker
 
-papers = []
+# Generate 50 Journals
+journals= [
+    'Journal of Computer Science',
+    'Journal of Applied Mathematics',
+    'Journal of Data Science',
+    'Journal of Machine Learning',
+    'Journal of Statistics',
+    'Journal of Artificial Intelligence',
+    'Journal of Software Engineering',
+    'Journal of Information Technology',
+    'Journal of Robotics',
+    'Journal of Computational Science',
+    'Journal of Analytical Science',
+    'Journal of Numerical Analysis',
+    'Journal of Algorithm Theory',
+    'Journal of Network Security',
+    'Journal of Computer Graphics',
+    'Journal of Database Management',
+    'Journal of Image Processing',
+    'Journal of Computer Architecture',
+    'Journal of Computer Networks',
+    'Journal of Web Technologies',
+    'Journal of Operating Systems',
+    'Journal of Security and Privacy',
+    'Journal of Cloud Computing',
+    'Journal of Computer Vision',
+    'Journal of Natural Language Processing',
+    'Journal of Data Mining',
+    'Journal of Distributed Systems',
+    'Journal of System Administration',
+    'Journal of Embedded Systems',
+    'Journal of Automated Reasoning',
+    'Journal of Cryptography',
+    'Journal of Mobile Computing',
+    'Journal of Grid Computing',
+    'Journal of Autonomous Systems',
+    'Journal of Bioinformatics',
+    'Journal of Simulation Modeling',
+    'Journal of Parallel Computing',
+    'Journal of Pattern Recognition',
+    'Journal of Network Analysis',
+    'Journal of Intelligent Systems',
+    'Journal of Data Warehousing',
+    'Journal of Internet of Things',
+    'Journal of Computational Biology',
+    'Journal of Virtual Reality',
+    'Journal of Scientific Computing',
+    'Journal of Knowledge Representation',
+    'Journal of Expert Systems',
+    'Journal of Electronic Commerce',
+    'Journal of Quantitative Analysis',
+    'Journal of Knowledge Management',
+    'Journal of Human Computer Interaction',
+    'Journal of System Dynamics',
+    'Journal of Computational Intelligence'
+]
 
-# Create 50 possible journals
-journals = ["Journal of Applied Mathematics", "Journal of Biomedical Science", "Computer Science Journal",
-"Journal of Analytical Chemistry", "International Journal of Microbiology", "Journal of Chemical Physics",
-"Journal of Geoscience", "Journal of Meteorology", "Journal of Astronomy", "Journal of Neuroscience",
-"Journal of Geology", "Journal of Statistics", "Journal of Molecular Biology", "Journal of Economics",
-"Journal of Genetics", "Journal of History", "Journal of Ecology", "Journal of Geography",
-"Journal of Physics", "Journal of Psychology", "Journal of Sociology", "Journal of Education",
-"Journal of Engineering", "Journal of Law", "Journal of Medicine", "Journal of Technology",
-"Journal of Computer Science", "Journal of Chemistry", "Journal of Biochemistry",
-"Journal of Organic Chemistry", "Journal of Nuclear Chemistry", "Journal of Physics A",
-"Journal of Physics B", "Journal of Physics C", "Journal of Mathematics",
-"Journal of Probability Theory", "Journal of Mathematical Analysis", "Journal of Algebra",
-"Journal of Differential Equations", "Journal of Topology", "Journal of Geometric Analysis",
-"Journal of Number Theory", "Journal of Combinatorics", "Journal of Group Theory",
-"Journal of Representation Theory", "Journal of Graph Theory", "Journal of Logic",
-"Journal of Set Theory", "Journal of Philosophy", "Journal of Political Science",
-"Journal of Anthropology", "Journal of Art History", "Journal of Linguistics",
-"Journal of Literary Studies", "Journal of Musicology", "Journal of Cultural Studies",
-"Journal of Film Studies", "Journal of Theatre Studies", "Journal of Gender Studies",
-"Journal of Media Studies", "Journal of Religion Studies", "Journal of Popular Culture"]
-
-# Create 10000 possible authors
+# Generate 10000 authors
+fake = Faker()
 authors = []
-for i in range(10000):
-    authors.append(faker_gen.name())
+
+for _ in range(10000):
+    authors.append(fake.name())
+
+# Generate 30 title structures
+title_structures = [
+    "Analysis of {noun} for {noun}",
+    "A {adjective} {noun} System for {noun}",
+    "Design of {noun} for {noun}",
+    "A {adjective} Model of {noun}",
+    "A {adjective} Framework for {noun}",
+    "Exploring {noun} in {noun}",
+    "The {adjective} Impact of {noun}",
+    "The {adjective} Role of {noun}",
+    "The {adjective} Use of {noun}",
+    "A Survey of {noun} in {noun}",
+    "The {adjective} Nature of {noun}",
+    "The {adjective} Characteristics of {noun}",
+    "The {adjective} Dynamics of {noun}",
+    "The {adjective} Structure of {noun}",
+    "The {adjective} Implications of {noun}",
+    "The {adjective} Significance of {noun}",
+    "The {adjective} Potential of {noun}",
+    "The {adjective} Impact of {noun} on {noun}",
+    "The {adjective} Relationship between {noun} and {noun}",
+    "The {adjective} Design of {noun} for {noun}",
+    "The {adjective} Use of {noun} for {noun}",
+    "The {adjective} Analysis of {noun} for {noun}",
+    "The {adjective} Application of {noun} for {noun}",
+    "The {adjective} Integration of {noun} in {noun}",
+    "The {adjective} Development of {noun} for {noun}",
+    "The {adjective} Evaluation of {noun} for {noun}",
+    "The {adjective} Implications of {noun} for {noun}",
+    "The {adjective} Role of {noun} in {noun}",
+    "The {adjective} Potential of {noun} for {noun}",
+    "The {adjective} Challenges of {noun} for {noun}"
+]
 
 # Generate 50000 papers
-for i in range(50000):
-    # Generate a random year between 1950 and 2020
-    year = randint(1950, 2020)
-    # Select a random journal
-    journal = journals[randint(0, len(journals)-1)]
-    # Generate a random number of pages
-    pages = randint(1, 400)
-    # Generate a random title
-    title = faker_gen.sentence(nb_words=5, variable_nb_words=True)
-    # Generate a random number of authors (up to 5)
-    n_authors = randint(1, 5)
-    authors_list = []
-    for j in range(n_authors):
-        authors_list.append(authors[randint(0, len(authors)-1)])
-    # Generate a random number of references (up to 5)
-    refs = []
-    while len(refs) < 5 and len(papers) > 0:
-        r = randint(0, len(papers)-1)
-        if papers[r]["title"] != title:
-            refs.append(papers[r]["title"])
-    # Create the paper
-    paper = {"year": year,
-             "journal": journal,
-             "pages": pages,
-             "title": title,
-             "authors": authors_list,
-             "refs": refs}
-    # Add the paper to the list
+papers = []
+for _ in range(50000):
+    year = random.randint(2000, 2020)
+    journal = random.choice(journals)
+    pages = random.randint(1, 100)
+    authors_num = 1
+    if len(authors) > 25:
+        authors_num = random.randint(1, 4)
+    paper_authors = [random.choice(authors) for _ in range(authors_num)]
+    title_structure = random.choice(title_structures)
+    title = title_structure.format(
+        adjective=fake.word(ext_word_list=['adjective']),
+        noun=fake.word(ext_word_list=['noun'])
+    )
+    references = []
+    while True:
+        if len(papers) == 0:
+            break
+        ref_paper = random.choice(papers)
+        if ref_paper['title'] != title and ref_paper not in references:
+            ref_string = f'{ref_paper["authors"][0]}, {ref_paper["title"]}, {ref_paper["journal"]}, {ref_paper["year"]}, {ref_paper["pages"]}'
+            references.append(ref_string)
+        if len(references) == 3:
+            break
+
+    paper = {
+        'year': year,
+        'journal': journal,
+        'pages': pages,
+        'title': title,
+        'authors': paper_authors,
+        'references': references
+    }
     papers.append(paper)
 
-# Print the papers
-for paper in papers:
-    print("Title: {}\nYear: {}\nJournal: {}\nPages: {}\nAuthors: {}\nReferences: {}".format(paper["title"], paper["year"], paper["journal"], paper["pages"], ", ".join(paper["authors"]), ", ".join(paper["refs"])))
+# Print first 10 records in YAML format
+for paper in papers[:10]:
+    print(yaml.dump(paper))
+
